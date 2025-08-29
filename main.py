@@ -2,31 +2,28 @@ from dotenv import load_dotenv
 import os
 import requests
 
-def get_data(api_key):
-    url = 'https://calendarific.com/api/v2/holidays'
-    params = {
-        'api_key': api_key,
-        'country': 'RU',
-        'year': 2025
-    }
+
+def fetch_holidays(token):
+    url = "https://calendarific.com/api/v2/holidays"
+    params = {"api_key": token, "country": "RU", "year": 2025}
     response = requests.get(url, params)
     response.raise_for_status()
-    data = response.json()
-    return data
+    return response.json()["response"]["holidays"]
+
 
 def main():
-    load_dotenv('.env')
-    api_key = os.getenv('TOKEN')
+    load_dotenv(".env")
+    token = os.getenv("TOKEN")
 
-    holidays = get_data(api_key)['response']['holidays']
-    for holiday in holidays:
-        name = holiday.get('name', 'no name')
-        description = holiday.get('description', 'no desc')
-        date = holiday.get('date', {}).get('iso', 'no date')
-        print(f'Дата: {date}')
-        print(f'Название: {name}')
-        print(f'Описание: {description}')
-        print()
+    holidays = fetch_holidays(token)
+    lines = [
+        f"Дата: {h['date']['iso']}\n"
+        f"Название: {h.get('name', '—')}\n"
+        f"Описание: {h.get('description', '—')}\n"
+        for h in holidays
+    ]
+    print("\n".join(lines))
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     main()
