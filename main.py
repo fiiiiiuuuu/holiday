@@ -14,13 +14,13 @@ def fetch_holidays(token):
 def main():
     load_dotenv(".env")
     token = os.getenv("TOKEN")
-
     holidays = fetch_holidays(token)
+
     lines = [
-        f"Дата: {h['date']['iso']}\n"
-        f"Название: {h.get('name', '—')}\n"
-        f"Описание: {h.get('description', '—')}\n"
-        for h in holidays
+        f"""Дата: {holiday['date']['iso']}
+Название: {holiday.get('name', '—')}
+Описание: {holiday.get('description', '—')}\n"""
+        for holiday in holidays
     ]
     print("\n".join(lines))
 
